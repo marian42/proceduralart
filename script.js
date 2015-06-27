@@ -230,7 +230,7 @@ function drawClouds() {
 	scene.cloudstart = getFloat(getPivot('cloudstart'),0.5,0.8);
 	scene.cloudfuzzyness = Math.pow(getFloat(getPivot('cloudfuzzyness')),2) * 0.4;
 	for (var x = 0; x < width; x++) {
-		for (var y = 0; y < height - Math.max(terrain1at(x), terrain2at(x)); y++) {
+		for (var y = 0; y < Math.min(terrain1at(x), terrain2at(x)); y++) {
 			setPixelRGB(x,y,255,255,255,simplex(x/400,Math.pow(y/150+1,1.5),5, scene.cloudstart,scene.cloudstart + scene.cloudfuzzyness) * (0.1 + scene.cloudfuzzyness / 0.35));
 		}
 	}
@@ -273,7 +273,7 @@ function drawSky() {
 
 	// Sky
 	for (var x = 0; x < width; x++) {
-		for (var y = 0; y < height - Math.max(terrain1at(x), terrain2at(x)); y++) {
+		for (var y = 0; y < Math.min(terrain1at(x), terrain2at(x)); y++) {
 			ry = y / height;
 			ry = ry + getFloat(1000000 + x * y + x + y, -scene.skynoise, scene.skynoise);
 			setPixel(x,y,getRGB(scene.skyhue * ry + (1 - ry) * (scene.skyhue + scene.skyhue2), scene.skysat, scene.skyvalue1 * ry + (1 - ry) * scene.skyvalue2));
@@ -317,6 +317,17 @@ function drawSky() {
 	}
 }
 
+function terrain1color(x, y) {
+	var miny = 1;
+	for (var i = x - 10; i < x + 10; i++) {
+		miny = Math.max(miny, terrain1at(i));
+	}
+	
+	var p = y - miny - 8 - 10 + getInt(20, 12253464 + x + y + x * y * y * y);
+
+	return getRGB(scene.terrainhue + getFloat(1000000 + x * y + x + y, -scene.terrainnoise, scene.terrainnoise), 0.25, (p < 0 ? 0.99 : 0.87) - (scene.night ? 0.8 : 0));
+}
+
 function terrain1at(x, igonrebumps) {
 	var v = scene.mountainheight * simplex(x / 200, scene.noiseseed, 5, 0, 1);
 
@@ -329,19 +340,7 @@ function terrain1at(x, igonrebumps) {
 		}
 	}
 
-	return height * (0.5 * v);
-}
-
-function terrain1color(x, y) {
-	var miny = 1;
-	for (var i = x - 10; i < x + 10; i++) {
-		miny = Math.max(miny, terrain1at(i));
-	}
-	
-	miny = height - miny;
-	var p = y - miny - 8 - 10 + getInt(20, 12253464 + x + y + x * y * y * y);
-
-	return getRGB(scene.terrainhue + getFloat(1000000 + x * y + x + y, -scene.terrainnoise, scene.terrainnoise), 0.25, (p < 0 ? 0.99 : 0.87) - (scene.night ? 0.8 : 0));
+	return height * (1 - 0.5 * v);
 }
 
 function terrain2at(x) {
@@ -377,7 +376,7 @@ function drawWater() {
 
 function drawTerrain() {
 	for (var x = 0; x < width; x++) {
-		for (var y = height - terrain1at(x); y < height; y++) {
+		for (var y = terrain1at(x); y < height; y++) {
 			setPixel(x, y, terrain1color(x,y), 1.0);
 		}
 	}
@@ -426,13 +425,13 @@ function drawBase() {
 	var highest = 0;
 	var x = 0;
 	for (var i = x0 - d; i < x0 + d; i++) {
-		if (terrain1at(i) > highest) {
+		if (terrain1at(i) < highest) {
 			highest = terrain1at(i, true);
 			x = i;
 		}
 	}
 
-	var y = height - terrain1at(x, true);
+	var y = terrain1at(x, true);
 	var color = terrain1color(x, y);
 
 	var bwidth = 55;
