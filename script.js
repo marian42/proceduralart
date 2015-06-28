@@ -358,6 +358,8 @@ function drawBase() {
 		}
 	}
 
+	applyBuffer();
+	
 	ctx.beginPath();
 	ctx.strokeStyle = getColorString(terrain1color(x,y));
 	ctx.moveTo(x,y + 5);
@@ -371,6 +373,8 @@ function drawBase() {
 		ctx.fillStyle = getColorString(terrain1color(x,y));
 		ctx.fillRect(x - 4 + getInt(8, getPivot('buildingoffset')), y - 8 - 5, 3 + getInt(12, getPivot('buildingwidth')), 8);
 	}
+
+	setupBuffer();
 }
 
 function draw() {
