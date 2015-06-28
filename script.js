@@ -4,7 +4,7 @@ if (getQueryParams(document.location.search).planet !== undefined) {
 	seed = getQueryParams(document.location.search).planet;
 }
 
-document.getElementById('permalink').href = 'index.html?planet=' + seed;
+document.getElementById('permalink').href = '/proceduralart/?planet=' + seed;
 
 noise.seed(seed % 10000);
 
