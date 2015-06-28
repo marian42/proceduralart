@@ -1,17 +1,3 @@
-function getQueryParams(qs) {
-    qs = qs.split('+').join(' ');
-
-    var params = {},
-        tokens,
-        re = /[?&]?([^=]+)=([^&]*)/g;
-
-    while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-    }
-
-    return params;
-}
-
 seed = Math.round(Math.random() * Number.MAX_SAFE_INTEGER);
 
 if (getQueryParams(document.location.search).planet !== undefined) {
@@ -146,12 +132,6 @@ function drawStarships(x, y) {
 						y - dy2 * i * size * 1.5 + dy * i * spread * size + dy * (size + j) + dy2 * (-size / 2 + 2), getRGB(exhausthue, 1, 1), Math.pow(1.0 - (j / exhaustlength), 2.0));
 		}
 	}	
-}
-
-function getColorString(color, alpha) {
-	if (alpha === undefined) 
-		alpha = 1;
-	return 'rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', ' + alpha + ')';
 }
 
 function drawSun(x, y, size) {
