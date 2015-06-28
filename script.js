@@ -6,8 +6,8 @@ var scene = {};
 var ctx;
 var myPixel;
 var myPixelData;
-var width = 400;
-var height = 400;
+var width;
+var height;
 var buffer;
 
 /* accepts parameters
@@ -46,6 +46,8 @@ function setupCanvas() {
 	
 	myPixel = ctx.createImageData(1,1);
 	myPixelData = myPixel.data;	
+	width = c.width;
+	height = c.height;
 }
 
 function setupBuffer() {
