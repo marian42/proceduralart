@@ -4,10 +4,10 @@ noise.seed(seed % 10000);
 
 var scene = {};
 var ctx;
-var myPixel;
-var myPixelData;
 var width;
 var height;
+
+var imageData;
 var buffer;
 
 /* accepts parameters
@@ -43,33 +43,21 @@ function getRGB(h, s, v) {
 function setupCanvas() {
 	var c = document.getElementById("myCanvas");
 	ctx = c.getContext("2d");
-	
-	myPixel = ctx.createImageData(1,1);
-	myPixelData = myPixel.data;	
+	ctx.fillStyle = 'black';
+
 	width = c.width;
 	height = c.height;
+
+	ctx.fillRect(0,0,width, height);
 }
 
 function setupBuffer() {
-	buffer = new Array(3);
-	for (var i = 0; i < 3; i++) {
-		buffer[i] = new Array(width);
-		for (var x = 0; x < width; x++) {
-			buffer[i][x] = new Array(height);
-			for (var y = 0; y < height; y++) {
-				buffer[i][x][y] = 0;
-			}
-		}
-	}
+	imageData = ctx.getImageData(0,0, width, height);
+	buffer = imageData.data;
 }
 
 function applyBuffer() {
-	for (var x = 0; x < width; x++) {
-		for (var y = 0; y < height; y++) {
-			ctx.fillStyle = "rgb("+buffer[0][x][y]+","+buffer[1][x][y]+","+buffer[2][x][y]+")";	
-			ctx.fillRect(x, y, 1, 1);
-		}
-	}	
+	ctx.putImageData(imageData, 0, 0);
 }
 
 function setPixel(x, y, color, alpha) {
@@ -77,24 +65,27 @@ function setPixel(x, y, color, alpha) {
 }
 
 function setPixelRGB(x, y, r, g, b, alpha) {
-	/*if (x >= width || y >= height || x < 0 || y < 0)
+	if (x >= width || y >= height || x < 0 || y < 0)
 		return;
-
 	x = Math.floor(x);
-	y = Math.floor(y);*/
+	y = Math.floor(y);
 	if (alpha === undefined)
 		alpha = 1;
-	if (alpha < 0)
-		alpha = 0;
+	if (alpha <= 0)
+		return;
 	if (alpha > 1)
 		alpha = 1;
 
-	/*buffer[0][x][y] = Math.floor((1 - alpha) * buffer[0][x][y] + alpha * r);
-	buffer[1][x][y] = Math.floor((1 - alpha) * buffer[1][x][y] + alpha * g);
-	buffer[2][x][y] = Math.floor((1 - alpha) * buffer[2][x][y] + alpha * b); */
-
-	ctx.fillStyle = "rgba("+r+","+g+","+b+"," + alpha + ")";	
-	ctx.fillRect(Math.floor(x), Math.floor(y), 1, 1);
+	
+	if (alpha == 1) {
+		buffer[(y * width + x) * 4 + 0] = r;
+		buffer[(y * width + x) * 4 + 1] = g;
+		buffer[(y * width + x) * 4 + 2] = b;
+	} else {
+		buffer[(y * width + x) * 4 + 0] = Math.floor((1 - alpha) * buffer[(y * width + x) * 4 + 0] + alpha * r);
+		buffer[(y * width + x) * 4 + 1] = Math.floor((1 - alpha) * buffer[(y * width + x) * 4 + 1] + alpha * g);
+		buffer[(y * width + x) * 4 + 2] = Math.floor((1 - alpha) * buffer[(y * width + x) * 4 + 2] + alpha * b);
+	}
 }
 
 function getInt(max, pivot) {
@@ -297,12 +288,14 @@ function drawSky() {
 	
 	// Sun
 	if (!scene.night) {
+		applyBuffer();
 		var maxsuns = 3;
 		for (var i = 0; i < maxsuns; i++) {
 			if (getInt(100, getPivot('checkstarship' + i)) < 30) {
 				drawSun(getInt(width, getPivot('sunx'+i)), getInt(height / 2, getPivot('suny'+i)), getInt(30, getPivot('sunsize'+i)) + 10);
 			}
 		}
+		setupBuffer();
 	}
 		
 	// Clouds
@@ -367,10 +360,13 @@ function drawWater() {
 	for (var y = wy; y < height; y++) {
 		for (var x = wx - (y - wy) * waterangle - coast * simplex(y / 10, coastp, 4, 0, 1); x < wx + (y - wy) * waterangle + coast * simplex(y / 10, coastp + 42, 4, 0, 1); x++) {
 			if (y >= terrain2at(x)) {
-				var brightness = 0.4;
-				color = ctx.getImageData(Math.min(Math.max(0,x + 8 * Math.sin(y / 6 * 2 * 3.14159)),width - 1), wy - 2*(y - wy), 1, 1).data;
-				setPixelRGB(x,y,Math.floor(color[0] * brightness), Math.floor(color[1] * brightness), Math.floor(color[2] * brightness),1);
-				setPixel(x,y,getRGB(scene.waterhue, 0.3, scene.night ? 0.3 : 0.95), 0.2);
+				var brightness = 0.6;
+
+				var rx = Math.floor(Math.min(Math.max(0,x + 8 * Math.sin(y / 6 * 2 * 3.14159)),width - 1));
+				var ry = Math.floor(wy - 2*(y - wy));
+
+				setPixelRGB(x,y,Math.floor(buffer[(ry * width + rx) * 4 + 0] * brightness), Math.floor(buffer[(ry * width + rx) * 4 + 1] * brightness), Math.floor(buffer[(ry * width + rx) * 4 + 2] * brightness),1);
+				setPixel(x,y,getRGB(scene.waterhue, 0.9, scene.night ? 0.3 : 0.5), 0.7);
 			}
 		}
 	}
@@ -460,12 +456,12 @@ function drawBase() {
 
 function draw() {
 	setupCanvas();
-	//setupBuffer();
+	setupBuffer();
 
 	drawSky();
 	drawTerrain();
 	
-	//applyBuffer();
+	applyBuffer();
 }
 
 draw();
