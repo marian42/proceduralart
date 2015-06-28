@@ -120,9 +120,6 @@ function simplex(x, y, octaves, lowercap, uppercap) {
 		var s = noise.simplex2(x * Math.pow(2, i-1),y * Math.pow(2, i-1)) / 2 + 0.5;
 		v += s * Math.pow(2, -i);
 	}
-	//console.log(v);
-	
-	//v = v / (1 - Math.pow(2, -octaves - 1));
 	
 	if (v < lowercap)
 		return 0;
@@ -256,7 +253,7 @@ function drawSky() {
 	scene.noiseseed = getFloat(getPivot('noiseSeed')) * 100;
 	scene.terrainnoise = getFloat(getPivot('terrainnoise'), 0, 0.03);
 
-	scene.night = false;
+	//scene.night = false;
 
 	if (scene.night) {
 		scene.skyvalue1 -= 0.6;
@@ -388,11 +385,10 @@ function drawTerrain() {
 		}
 	}
 
-
 	// Terrain 2
 	for (var x = 0; x < width; x++) {
 		for (var y = terrain2at(x); y < height; y++) {
-			setPixel(x, y, getRGB(scene.terrainhue, 0.25, scene.night ? 0.12 : 0.75), 1.0);
+			setPixel(x, y, getRGB(scene.terrainhue, 0.35, scene.night ? 0.12 : 0.75), 1.0);
 		}
 	}
 
@@ -402,7 +398,7 @@ function drawTerrain() {
 
 	for (var x = 0; x < width; x++) {
 		for (var y = terrain2at(x) - 2; y < height; y++) {
-			setPixel(x, y, getRGB(scene.grasshue, 0.8, scene.night ? 0.3 : 1.0), simplex(x / scene.grasssize, (y - height * 0.25 * (1 - simplex(x / 600, scene.noiseseed + 100, 4, 0, 1))) / scene.grassstretchiness, 3, 0.57, 0.6));
+			setPixel(x, y, getRGB(scene.grasshue, 0.8, scene.night ? 0.2 : 1.0), simplex(x / scene.grasssize, (y - height * 0.25 * (1 - simplex(x / 600, scene.noiseseed + 100, 4, 0, 1))) / scene.grassstretchiness, 3, 0.57, 0.6));
 		}
 	}
 
