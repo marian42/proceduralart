@@ -324,8 +324,8 @@ function terrain1color(x, y) {
 }
 
 function terrain1at(x, igonrebumps) {
-	var v = scene.mountainheight * simplex(x / 200, scene.noiseseed, 5, 0, 1);
-
+	var v = scene.mountainheight * simplex(x / 200, scene.noiseseed, 5, 0, 1) / 0.8;
+	
 	if (scene.showbumps && !igonrebumps) {
 		for (var i = x - scene.bumpwidth / 2; i < x + scene.bumpwidth / 2; i++) {
 			if (simplex(i / 5, scene.noiseseed, 5) > 0.7 + 0.1 * scene.bumpthreshhold) {
@@ -339,7 +339,7 @@ function terrain1at(x, igonrebumps) {
 }
 
 function terrain2at(x) {
-	return height * (0.75 + 0.25 * (1 - simplex(x / 600, scene.noiseseed + 100, 4, 0, 1) + 0.0 * Math.pow((x - width / 2) / (width / 2), 2)));	
+	return height * (0.75 + 0.25 * (1 - simplex(x / 600, scene.noiseseed + 100, 4, 0, 1) - 0.3 * Math.pow((x - width / 2) / (width / 2), 2)));	
 }
 
 function drawWater() {
@@ -373,8 +373,9 @@ function drawWater() {
 }
 
 function drawTerrain() {
+	// Terrain 1
 	for (var x = 0; x < width; x++) {
-		for (var y = terrain1at(x); y < height; y++) {
+		for (var y = terrain1at(x); y < terrain2at(x); y++) {
 			setPixel(x, y, terrain1color(x,y), 1.0);
 		}
 	}
@@ -382,45 +383,37 @@ function drawTerrain() {
 	// Base
 	var maxbases = 4;
 	for (var i = 0; i < maxbases; i++) {
-		if (getInt(100, getPivot('checkbase' + i)) < 10) {
+		if (getInt(100, getPivot('checkbase' + i)) < 15) {
 			drawBase();
 		}
 	}
-	
+
+
+	// Terrain 2
 	for (var x = 0; x < width; x++) {
 		for (var y = terrain2at(x); y < height; y++) {
 			setPixel(x, y, getRGB(scene.terrainhue, 0.25, scene.night ? 0.12 : 0.75), 1.0);
 		}
 	}
 
+	// Grass
 	scene.grasssize = getInt(50, getPivot('grasssize')) + 70;
 	scene.grassstretchiness = getInt(40, getPivot('grassstretchiness')) + 5;
 
 	for (var x = 0; x < width; x++) {
-		var p = height * (0.75 + 0.25 * (1 - simplex(x / 600, scene.noiseseed + 100, 4, 0, 1)));
-		for (var y = p - 2; y < height; y++) {
+		for (var y = terrain2at(x) - 2; y < height; y++) {
 			setPixel(x, y, getRGB(scene.grasshue, 0.8, scene.night ? 0.3 : 1.0), simplex(x / scene.grasssize, (y - height * 0.25 * (1 - simplex(x / 600, scene.noiseseed + 100, 4, 0, 1))) / scene.grassstretchiness, 3, 0.57, 0.6));
 		}
 	}
 
-	/*for (var d = 0; d < depths; d++) {
-			for (var x = 0; x < width; x++) {
-			var p = height * ((0.15 * (1 - Math.pow(simplex(d, x / (300 * (d + 1) / (depths)), 4, 0.0, 1.0),1)) + 0.5 * d / (depths - 1)) * (1.0 - simplex(x / width, scene.noiseseed, 3)) + 0.5);
-			for (var y = p; y < height; y++) {
-				setPixel(x,y,getRGB(scene.terrainhue, d/(depths-1) * 0.7 + 0.3, scene.night ? 0.2 : 0.8, 0.5 + 0.3 * d / (depths - 1.0)));
-			}
-		}		
-	}*/
-
-	drawWater();
-	
-	
+	// Water
+	drawWater();	
 }
 
 function drawBase() {
-	var x0 = getInt(width, getPivot('basex'));
+	var x0 = 60 + getInt(width - 120, getPivot('basex'));
 	var d = 50;
-	var highest = 0;
+	var highest = height;
 	var x = 0;
 	for (var i = x0 - d; i < x0 + d; i++) {
 		if (terrain1at(i) < highest) {
