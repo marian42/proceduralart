@@ -18,7 +18,8 @@ if (getQueryParams(document.location.search).planet !== undefined) {
 	seed = getQueryParams(document.location.search).planet;
 }
 
-document.title = seed;
+document.getElementById('permalink').href = 'index.html?planet=' + seed;
+
 noise.seed(seed % 10000);
 
 var scene = {};

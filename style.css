@@ -1,6 +1,22 @@
 body {
-	background-color:#000000;
+	background-color:#0E0E0E;
 	text-align:center;
+  color: #FFFFFF;
+  font-family: sans-serif;
+  font-size: 13px;
+}
+
+a, a:visited {
+  color: #9D9D9D;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #D9D9D9;
+}
+
+h1 {
+  font-style: '';
 }
 
 .pixelated {
@@ -12,4 +28,13 @@ body {
   image-rendering:crisp-edges;               /* CSS4 Proposed  */
   image-rendering:pixelated;                 /* CSS4 Proposed  */
   -ms-interpolation-mode:nearest-neighbor;   /* IE8+           */
+}
+
+canvas {
+  width: 800px;
+  height: 800px;
+}
+
+.controls {
+  margin: 10px;
 }
