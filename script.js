@@ -1,4 +1,23 @@
+function getQueryParams(qs) {
+    qs = qs.split('+').join(' ');
+
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
 seed = Math.round(Math.random() * Number.MAX_SAFE_INTEGER);
+
+if (getQueryParams(document.location.search).planet !== undefined) {
+	seed = getQueryParams(document.location.search).planet;
+}
+
 document.title = seed;
 noise.seed(seed % 10000);
 
