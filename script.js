@@ -172,10 +172,10 @@ function drawSky() {
 	scene.terrainhue = scene.skyhue + 0.5 * getInt(2, getPivot('terrainoffset'));
 	scene.grasshue = getHue(getPivot('grasshue'))
 
-	scene.showbumps = getInt(6, getPivot('showbumps')) == 0;
-	scene.bumpwidth = 6 + getInt(15, getPivot('bumpwidth'));
+	scene.showbumps = getInt(3, getPivot('showbumps')) == 0;
+	scene.bumpwidth = 8 + getInt(15, getPivot('bumpwidth'));
 	scene.bumpslope = 2 * (1 + getInt(7, getPivot('bumpslope')));
-	scene.bumpheight = 0.1 + 0.15 * getFloat(getPivot('bumpheight'));
+	scene.bumpheight = 0.1 + 0.25 * getFloat(getPivot('bumpheight'));
 	scene.bumpthreshhold = getFloat(getPivot('bumpthreshhold'));
 
 	scene.mountainheight = 1;
