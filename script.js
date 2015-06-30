@@ -288,7 +288,7 @@ function drawWater() {
 	var coast = getInt(20, getPivot('coast')) + 20;
 	var coastp = getInt(100, getPivot('coastp')) / 10;
 
-	for (var y = wy; y < height; y++) {
+	for (var y = wy - 10; y < height; y++) {
 		for (var x = wx - (y - wy) * waterangle - coast * simplex(y / 10, coastp, 4, 0, 1); x < wx + (y - wy) * waterangle + coast * simplex(y / 10, coastp + 42, 4, 0, 1); x++) {
 			if (y >= terrain2at(x)) {
 				var brightness = 0.6;
