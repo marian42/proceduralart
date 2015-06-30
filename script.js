@@ -16,6 +16,10 @@ var height;
 var imageData;
 var buffer;
 
+function getHue(pivot) {
+	return (getBool(pivot + 1) ? scene.skyhue : scene.terrainhue) + 0.1 * (getInt(3, pivot) - 1);
+}
+
 function setupCanvas() {
 	var c = document.getElementById("myCanvas");
 	ctx = c.getContext("2d");
@@ -115,10 +119,10 @@ function drawStarships(x, y) {
 		}
 	}
 	
-	var exhausthue = scene.skyhue + 0.25 * (1 + getInt(3, getPivot('exhausthue')));
+	var exhausthue = getHue(getPivot('exhausthue'));
 	if (exhausthue > 1)
 		exhausthue -= 1;
-	var exhaustlength = (3 + getInt(9, getPivot('exhausthue'))) * size;
+	var exhaustlength = (3 + getInt(9, getPivot('exhaustlength'))) * size;
 	
 	for (var i = 0; i < count; i++) {
 		for (var j = 0; j < exhaustlength; j++) {
@@ -165,8 +169,8 @@ function drawSky() {
 	scene.skysat = getFloat(getPivot('skysat'), 0.7,0.9);
 	scene.night = getBool(getPivot('night'));
 
-	scene.terrainhue = scene.skyhue + 0.25 * (getInt(4, getPivot('terrainhue')));
-	scene.grasshue = scene.skyhue + 0.25 * (getInt(4, getPivot('grasshue')));
+	scene.terrainhue = scene.skyhue + 0.5 * getInt(2, getPivot('terrainoffset'));
+	scene.grasshue = getHue(getPivot('grasshue'))
 
 	scene.showbumps = getInt(6, getPivot('showbumps')) == 0;
 	scene.bumpwidth = 6 + getInt(15, getPivot('bumpwidth'));
@@ -270,7 +274,7 @@ function terrain2at(x) {
 }
 
 function drawWater() {
-	scene.waterhue = scene.skyhue + 0.25 * (getInt(4, getPivot('terrainhue')));
+	scene.waterhue = getHue(getPivot('waterhue'));
 	
 	var wx = 0;
 	for (var i = 0; i < width; i++) {
