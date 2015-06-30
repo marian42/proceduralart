@@ -22,6 +22,9 @@ function getQueryParams(qs) {
  * h, s, v
 */
 function getRGB(h, s, v) {
+    while (h > 1) h -= 1;
+    while (h < 0) h += 1;
+
     var r, g, b, i, f, p, q, t;
     if (h && s === undefined && v === undefined) {
         s = h.s, v = h.v, h = h.h;
