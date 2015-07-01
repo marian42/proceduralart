@@ -218,17 +218,28 @@ function drawSky() {
 	}
 	
 	// Sun
+	var hasSun = false;
 	if (!scene.night) {
-		applyBuffer();
 		var maxsuns = 3;
 		for (var i = 0; i < maxsuns; i++) {
-			if (getInt(100, getPivot('checkstarship' + i)) < 30) {
+			if (getInt(100, getPivot('checkstarship' + i)) < 15) {
+				if (!hasSun) {
+					applyBuffer();
+					hasSun = true;
+				}
 				drawSun(getInt(width, getPivot('sunx'+i)), getInt(height / 2, getPivot('suny'+i)), getInt(30, getPivot('sunsize'+i)) + 10);
 			}
 		}
-		setupBuffer();
+		if (hasSun) {
+			setupBuffer();
+		}
 	}
-		
+
+	// Planet	
+	if (!hasSun && getInt(100, getPivot('planetvisible')) < 70) {
+		drawPlanet();
+	}
+
 	// Clouds
 	if (!scene.night) {
 		drawClouds();
@@ -379,6 +390,68 @@ function drawBase() {
 	}
 
 	setupBuffer();
+}
+
+function rotatevector(x, y, alpha) {
+	var result = {};
+	result.x = x * Math.cos(alpha) - y * Math.sin(alpha);
+	result.y = x * Math.sin(alpha) + y * Math.cos(alpha);
+	return result;
+}
+
+function drawPlanet() {
+	var x = getInt(width, getPivot('planetx'));
+	var y = getInt(height / 2, getPivot('planety'));
+	var radius = 30 + 100 * Math.pow(getFloat(getPivot('planetradius')), 2);
+
+	var planetsaturation = getFloat(getPivot('planetsaturation'));
+	var continentsize = 0.5 + 3 * getFloat(getPivot('continentsize'));
+	var continentdetail = 3 + getInt(4, getPivot('continentdetail'));
+	var covered = 0.4 + 0.3 * getFloat(getPivot('covered'));
+
+	var alpha = (-30 + getInt(60, getPivot('planetrotation1'))) * 3.1415 / 180; // rotational offset
+	var beta = (- 20 - getInt(30, getPivot('planetrotation2'))) * 3.1415 / 180; // rotational offset	
+
+	var atmosphere = 0.03;
+
+	for (var a = x - radius * (1 + atmosphere); a < x + radius * (1 + atmosphere); a++) {
+		for (var b = y - radius * (1 + atmosphere); b < y + radius * (1 + atmosphere); b++) {
+			var localx = (a - x) / radius;
+			var localz = (b - y) / radius;
+
+			var projectedradius = Math.sqrt(Math.pow(localx, 2) + Math.pow(localz, 2));
+
+			var localy = Math.sqrt(1 - localx * localx - localz * localz);
+
+			var rotated = rotatevector(localx, localz, alpha);
+			localx = rotated.x;
+			localz = rotated.y;
+
+			var rotated = rotatevector(localy, localz, beta);
+			localy = rotated.x;
+			localz = rotated.y;
+
+
+			var theta = Math.acos(localz);
+			var phi = Math.atan(localy / localx);
+			if (localx == 0) {
+				phi = 3.14159 / 2 * (localy > 0 ? 1 : -1);
+			}
+			if (localx < 0) {
+				phi += (localy >= 0 ? 1 : -1) * 3.14159;
+			}
+
+			if (projectedradius >= 1 && projectedradius < 1 + atmosphere) {
+				setPixel(a, b, getRGB(scene.skyhue, 0.5, scene.night ? 0.3 : 1.0), 0.4);
+			}
+
+			if (projectedradius < 1) {
+				var planettexture = simplex(theta * continentsize, phi * continentsize, continentdetail, covered, covered) * 0.08 + 0.4 + 0.5 * Math.floor((theta / 3.14159 * 10 + 0.4 * getFloat(a + b + a * b + 45345))) * 0.1;
+				setPixel(a, b, getRGB(scene.skyhue, 0.5 + 0.4 * planetsaturation, (scene.night ? 0.32 : 1.0) * planettexture), 1.0);
+			}
+		}
+	}
+
 }
 
 function draw() {
