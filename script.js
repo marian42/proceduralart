@@ -119,7 +119,7 @@ function drawStarships(x, y) {
 		}
 	}
 	
-	var exhausthue = getHue(getPivot('exhausthue'));
+	var exhausthue = scene.skyhue + 0.5;
 	if (exhausthue > 1)
 		exhausthue -= 1;
 	var exhaustlength = (3 + getInt(9, getPivot('exhaustlength'))) * size;
