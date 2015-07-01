@@ -405,7 +405,7 @@ function drawPlanet() {
 	var radius = 30 + 100 * Math.pow(getFloat(getPivot('planetradius')), 2);
 
 	var planetsaturation = getFloat(getPivot('planetsaturation'));
-	var continentsize = 0.5 + 3 * getFloat(getPivot('continentsize'));
+	var continentsize = 0.5 + 1.5 * getFloat(getPivot('continentsize'));
 	var continentdetail = 3 + getInt(4, getPivot('continentdetail'));
 	var covered = 0.4 + 0.3 * getFloat(getPivot('covered'));
 
