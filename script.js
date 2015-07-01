@@ -69,6 +69,7 @@ function setPixelRGB(x, y, r, g, b, alpha) {
 }
 
 function drawBrightStar(x,y,size) {
+	applyBuffer();
 	ctx.fillStyle = "rgba(255,255,255,0.03)";	
 	ctx.beginPath();
 	ctx.arc(x,y,size,0,2*Math.PI);
@@ -80,6 +81,7 @@ function drawBrightStar(x,y,size) {
 	ctx.fill();
 	
 	ctx.fillStyle = "rgba(255,255,255,1.0)";
+	setupBuffer();
 		
 	setPixelRGB(x,y, 255,255,255,1);
 	setPixelRGB(x-1,y+1, 255,255,255,0.8);
