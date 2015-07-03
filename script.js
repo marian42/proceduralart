@@ -501,12 +501,12 @@ function drawPlanet() {
 			}
 
 			if (projectedradius >= 1 && projectedradius < 1 + atmosphere) {
-				setPixel(a, b, getRGB(scene.skyhue, 0.5, scene.night ? 0.3 : 1.0), 0.4);
+				setPixel(a, b, getRGB(scene.skyhue, 0.5, scene.night ? 0.3 : 1.0), 0.2);
 			}
 
 			if (projectedradius < 1) {
 				var planettexture = simplex(theta * continentsize, phi * continentsize, continentdetail, covered, covered) * 0.08 + 0.4 + 0.5 * Math.floor((theta / 3.14159 * 10 + 0.4 * getFloat(a + b + a * b + 45345))) * 0.1;
-				setPixel(a, b, getRGB(scene.skyhue, 0.5 + 0.4 * planetsaturation, (scene.night ? 0.32 : 1.0) * planettexture), 1.0);
+				setPixel(a, b, getRGB(scene.skyhue + theta * 0.03, 0.5 + 0.4 * planetsaturation, (scene.night ? 0.32 : 1.0) * planettexture), 1.0);
 			}
 		}
 	}
