@@ -162,6 +162,59 @@ function drawClouds() {
 	}
 }
 
+function drawAtlas () {
+	var x = width * (0.2 + 0.6 * getFloat(getPivot('atlasx')));
+	var y = height * (0.1 + 0.3 * getFloat(getPivot('atlasy')));
+	var size = 30;
+	
+	applyBuffer();
+
+	// Primer
+	ctx.fillStyle = getColorString(getRGB(scene.skyhue, 0.8, 0.15));	
+	ctx.beginPath();
+	ctx.moveTo(x, y - size * 1.2);
+	ctx.lineTo(x + size, y);
+	ctx.lineTo(x, y + size * 2);
+	ctx.lineTo(x - size, y);
+	ctx.closePath();
+	ctx.fill();
+
+	// Core
+	ctx.fillStyle = 'rgb(254, 0, 0)';
+	ctx.beginPath();	
+	ctx.arc(x,y,size * 0.55, 0, 2*Math.PI);
+	ctx.fill();
+
+	// Top right
+	ctx.fillStyle = getColorString(getRGB(scene.skyhue, 0.8, 0.15), 0.7);	
+	ctx.beginPath();
+	ctx.moveTo(x, y - size * 1.2);
+	ctx.lineTo(x + size, y);
+	ctx.lineTo(x, y - size * 0.1);
+	ctx.closePath();
+	ctx.fill();
+
+	// Top left
+	ctx.fillStyle = getColorString(getRGB(scene.skyhue, 0.6, 0.2), 0.97);	
+	ctx.beginPath();
+	ctx.moveTo(x, y - size * 1.2);
+	ctx.lineTo(x - size, y);
+	ctx.lineTo(x, y - size * 0.1);
+	ctx.closePath();
+	ctx.fill();
+
+	// Bottom left
+	ctx.fillStyle = getColorString(getRGB(scene.skyhue, 0.33, 0.25), 0.9);	
+	ctx.beginPath();
+	ctx.moveTo(x, y + size * 2);
+	ctx.lineTo(x - size, y);
+	ctx.lineTo(x, y - size * 0.1);
+	ctx.closePath();
+	ctx.fill();
+
+	setupBuffer();
+}
+
 function drawSky() {
 	scene.skyhue = getFloat(getPivot('skyhue'));
 	scene.skyhue2 = getFloat(getPivot('skyhue')) * 0.16;
@@ -242,6 +295,10 @@ function drawSky() {
 		drawPlanet();
 	}
 
+	// Atlas
+	if (getInt(100, getPivot('hasAtllas')) < 40) {
+		drawAtlas();
+	}
 	// Clouds
 	if (!scene.night) {
 		drawClouds();
