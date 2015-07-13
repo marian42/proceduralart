@@ -509,7 +509,123 @@ function drawPlanet() {
 			}
 		}
 	}
+}
 
+function drawTreeBlob(x, y, r, r_var, color, seed, stretchiness) {
+	for (var a = x - r - r_var; a < x + r + r_var; a++) {
+		for (var b = y - r - r_var; b < y + r + r_var; b++) {
+			var localx = a - x;
+			var localy = b - y;
+			localy /= stretchiness;
+			var localr = Math.sqrt(Math.pow(localx, 2) + Math.pow(localy, 2));
+
+			var phi = Math.atan(localy / localx);
+			if (localx == 0) {
+				phi = 3.14159 / 2 * (localy > 0 ? 1 : -1);
+			}
+			if (localx < 0) {
+				phi += (localy >= 0 ? 1 : -1) * 3.14159;
+			}
+
+			if (localr < r) {
+				setPixel(a, b, color);
+			} else if (localr - r < r_var * simplex(phi / 3, seed, 5)) {
+				setPixel(a, b, color);
+			}
+		}
+	}
+}
+
+function drawTree(x, y, leafcolor, seed) {
+	var size = 3 + getInt(5, getPivot('treesize'));
+	var blobcount = 1 + getInt(5, getPivot('treeblobcount'));
+	var height = 5 + getInt(20, getPivot('treeblobcount'));
+	var height_var = 10;
+
+	applyBuffer();
+	ctx.strokeStyle = getColorString(getRGB(scene.terrainhue, 0.4, scene.night ? 0.05 : 0.1));
+
+	var blobs = [];
+	for (var i = 0; i < blobcount; i++) {
+		var blob = {'x': x - size * (blobcount - 1) / 2 + i * size,
+			'y': y - height - getInt(height_var, seed * i + i + 122353)};
+		blobs.push(blob);
+	}
+
+	var nodes = blobs;
+	for (var step = 0; step < blobcount - 1; step++) {
+		var x_offset = Math.floor(size * (-0.5 + getFloat(getPivot('tree_x_offset' + step + seed))));
+		
+		var eliminateIndex = getInt(nodes.length - 1, seed + step + 3464);
+		var newNodes = [];
+		for (var i = 0; i < eliminateIndex; i++) {
+			newNodes.push({
+				'x': x - size * (blobcount - 1 - step) / 2 + i * size + x_offset,
+				'y': y - height + height * step / blobcount})
+		}
+		newNodes.push({
+			'x': (nodes[eliminateIndex].x + nodes[eliminateIndex + 1].x) / 2 + x_offset,
+			'y': y - height + height * step / blobcount});
+		for (var i = eliminateIndex + 2; i < nodes.length; i++) {
+			newNodes.push({
+				'x': x - size * (blobcount - 1 - step) / 2 + i * size + x_offset,
+				'y': y - height + height * step / blobcount})
+		}
+		
+		for (var i = 0; i < nodes.length; i++) {
+			ctx.beginPath();
+			ctx.moveTo(nodes[i].x, nodes[i].y);
+			if (i <= eliminateIndex) {
+				ctx.lineTo(newNodes[i].x, newNodes[i].y);				
+			} else {
+				ctx.lineTo(newNodes[i-1].x, newNodes[i-1].y);
+			}
+
+			ctx.stroke();
+		}
+
+		nodes = newNodes;
+	}
+
+	ctx.beginPath();
+	ctx.moveTo(nodes[0].x, nodes[0].y);
+	ctx.lineTo(x,y);
+	ctx.stroke();
+
+	setupBuffer();
+
+	for (var i = 0; i < blobcount; i++) {
+		drawTreeBlob(blobs[i].x, blobs[i].y, 2, 10, leafcolor, seed + 232454 * i, 0.5);		
+	}
+}
+
+function drawTrees() {
+	var treeCount = 10 + getInt(50, getPivot('treecount'));
+	var treelocations = [];
+
+	var c = 0;
+	while (treelocations.length < treeCount) {
+		var x = getInt(width, getPivot('tree_x' + c));
+		var y = getInt(height, getPivot('tree_y' + c));
+		c++;
+
+		if (terrain2at(x) < y 
+			&& simplex(x / 200, (y - height * 0.25 * (1 - simplex(x / 600, scene.noiseseed + 150, 4, 0, 1))) / 70, 3, 0, 1) < 0.4) {
+			treelocations.push({'x': x, 'y': y});
+		}
+	}
+
+	var treehue = scene.terrainhue;
+
+	treelocations.sort(function(a,b) {return a.y - b.y});
+
+	for (var i = 0; i < treelocations.length; i++) {
+		var hue = treehue;
+		if (getInt(100, getPivot('specialtree' + i)) < 3) {
+			hue += 0.5;
+		}
+		drawTree(treelocations[i].x, treelocations[i].y, getRGB(hue, 0.9, (scene.night ? 0.3 : 0.5) - 0.03 + 0.06 * getFloat(getPivot('treehueoffset' + i))), getPivot('treeseed' + i));
+	}
 }
 
 function draw() {
@@ -519,6 +635,10 @@ function draw() {
 	drawSky();
 	drawTerrain();
 	
+	if (getInt(100, getPivot('hastrees')) < 70) {
+		drawTrees();		
+	}
+
 	if (getInt(100, getPivot('hasriver')) < 70) {
 		drawWater();	
 	}
