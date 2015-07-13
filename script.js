@@ -1,4 +1,4 @@
-seed = Math.round(Math.random() * Number.MAX_SAFE_INTEGER);
+seed = Math.round(Math.random() * 9007199254740991);
 
 if (getQueryParams(document.location.search).planet !== undefined) {
 	seed = getQueryParams(document.location.search).planet;
