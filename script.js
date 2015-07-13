@@ -397,17 +397,16 @@ function drawTerrain() {
 	}
 
 	// Grass
-	scene.grasssize = getInt(50, getPivot('grasssize')) + 70;
-	scene.grassstretchiness = getInt(40, getPivot('grassstretchiness')) + 5;
+	if (getInt(100, getPivot('hasgrass')) < 97) {
+		scene.grasssize = getInt(50, getPivot('grasssize')) + 70;
+		scene.grassstretchiness = getInt(40, getPivot('grassstretchiness')) + 5;
 
-	for (var x = 0; x < width; x++) {
-		for (var y = terrain2at(x) - 2; y < height; y++) {
-			setPixel(x, y, getRGB(scene.grasshue, 0.8, scene.night ? 0.2 : 1.0), simplex(x / scene.grasssize, (y - height * 0.25 * (1 - simplex(x / 600, scene.noiseseed + 100, 4, 0, 1))) / scene.grassstretchiness, 3, 0.57, 0.6));
+		for (var x = 0; x < width; x++) {
+			for (var y = terrain2at(x) - 2; y < height; y++) {
+				setPixel(x, y, getRGB(scene.grasshue, 0.8, scene.night ? 0.2 : 1.0), simplex(x / scene.grasssize, (y - height * 0.25 * (1 - simplex(x / 600, scene.noiseseed + 100, 4, 0, 1))) / scene.grassstretchiness, 3, 0.57, 0.6));
+			}
 		}
 	}
-
-	// Water
-	drawWater();	
 }
 
 function drawBase() {
@@ -520,6 +519,10 @@ function draw() {
 	drawSky();
 	drawTerrain();
 	
+	if (getInt(100, getPivot('hasriver')) < 70) {
+		drawWater();	
+	}
+
 	applyBuffer();
 }
 
