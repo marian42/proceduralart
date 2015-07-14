@@ -51,7 +51,7 @@ function getRGB(h, s, v) {
 
 // General random & noise functions
 function getInt(max, pivot) {
-	return (seed % pivot) % max;
+	return (scene.seed % pivot) % max;
 }
 
 function getBool(pivot) {
@@ -63,12 +63,12 @@ function getFloat(pivot, from, to) {
 		from = 0;
 	if (!to)
 		to = 1;
-	var x = ((seed % pivot) % 100000) / 100000;
+	var x = ((scene.seed % pivot) % 100000) / 100000;
 	return from + (to - from) * x;
 }
 
-function getPivot(seed) {
-	var myrng = new Math.seedrandom(seed);
+function getPivot(text) {
+	var myrng = new Math.seedrandom(text);
 	return Math.round(myrng() * 100000000);
 }
 
