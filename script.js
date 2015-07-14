@@ -1,5 +1,3 @@
-var scene = {};
-
 seed = getRandomSeed();
 var canvas = document.getElementById("myCanvas");
 

@@ -1,3 +1,5 @@
+var scene = {};
+
 function getHue(pivot) {
 	return (getBool(pivot + 1) ? scene.skyhue : scene.terrainhue) + 0.1 * (getInt(3, pivot) - 1);
 }
