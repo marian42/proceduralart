@@ -50,6 +50,10 @@ function getRGB(h, s, v) {
 }
 
 // General random & noise functions
+function getRandomSeed() {
+    return Math.round(Math.random() * 9007199254740991);
+}
+
 function getInt(max, pivot) {
 	return (scene.seed % pivot) % max;
 }

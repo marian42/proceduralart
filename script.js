@@ -1,6 +1,6 @@
 var scene = {};
 
-seed = Math.round(Math.random() * 9007199254740991);
+seed = getRandomSeed();
 var canvas = document.getElementById("myCanvas");
 
 
