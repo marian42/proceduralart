@@ -8,6 +8,11 @@ eval(fs.readFileSync('../seedrandom.min.js')+'');
 eval(fs.readFileSync('../helpers.js')+'');
 eval(fs.readFileSync('../planet.js')+'');
 
+var supply = {
+	size: 5,
+	images: [],
+	working: false}
+
 function resize(img, scale) {
 	// http://phoboslab.org/log/2012/09/drawing-pixels-is-hard
     var widthScaled = img.width * scale;
@@ -34,12 +39,42 @@ function resize(img, scale) {
 }
 
 function createImage() {
+	console.time("render");
 	var canvas = new Canvas(640, 360);
 	var seed = getRandomSeed();
 	draw(canvas, seed);
 	canvas = resize(canvas, 3);
 
+	console.timeEnd("render");
 	return canvas;
+}
+
+function getImage() {
+	if (supply.images.length > 0) {
+		var image = supply.images.pop();
+		console.log('Stored: ' + supply.images.length);
+
+		// TODO updateSupply() as thread
+		return image;
+	} else {
+		console.log('Supply empty!');
+		return createImage();
+	}
+}
+
+function updateSupply() {
+	if (supply.working) {
+		return;
+	}
+
+	supply.working = true;
+
+	while (supply.images.length < supply.size) {
+		supply.images.push(createImage());
+		console.log('Stored: ' + supply.images.length);
+	}
+
+	supply.working = false;
 }
 
 
