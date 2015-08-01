@@ -9,6 +9,7 @@ function discoverNew() {
 		var seed = getRandomSeed();
 		draw(canvas, seed);
 		btnDiscoverNew.innerHTML = 'discover new planet';
+		document.getElementById('permalink').href = '/proceduralart/?planet=' + seed;
 	}, 0);
 
 	return false;
