@@ -5,6 +5,9 @@
 This is a simple website that procedurally generates pixelart.
 The images show alien planets inspired by the art style of [No Man's Sky](https://www.youtube.com/watch?v=RRpDn5qPp3s).
 
+Go ahead and generate your own pixelart here:
+https://marian42.github.io/proceduralart
+
 ## Node.js
 Besides the website, this repository contains two nodejs files.
 One is a simple server that provides a new procedural picture at each page load.
