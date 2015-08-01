@@ -1,3 +1,11 @@
+/*
+A simple nodejs server that provides a procedural image.
+Currently too slow because of missing hardware support for the canvas module.
+
+How to install canvas module:
+https://github.com/Automattic/node-canvas/wiki/Installation---Windows
+*/
+
 var http = require('http');
 var Canvas = require('canvas');
 var fs = require('fs');
