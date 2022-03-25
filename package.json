@@ -1,0 +1,9 @@
+{
+	"main": "nodejs/server.js",
+	"scripts": {
+		"start": "cd nodejs && node server.js"
+	},
+	"dependencies": {
+		"canvas": "^2.9.1"
+	}
+}

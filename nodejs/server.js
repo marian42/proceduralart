@@ -28,7 +28,7 @@ function resize(img, scale) {
     
     var origPixels = img.getContext('2d').getImageData(0, 0, img.width, img.height);
     
-    var scaled = new Canvas(widthScaled, heightScaled);
+    var scaled = new Canvas.Canvas(widthScaled, heightScaled);
     var scaledCtx = scaled.getContext('2d');
     var scaledPixels = scaledCtx.getImageData( 0, 0, widthScaled, heightScaled );
     
@@ -48,7 +48,7 @@ function resize(img, scale) {
 
 function createImage() {
 	console.time("render");
-	var canvas = new Canvas(640, 360);
+	var canvas = new Canvas.Canvas(640, 360);
 	var seed = getRandomSeed();
 	draw(canvas, seed);
 	canvas = resize(canvas, 3);
@@ -94,4 +94,4 @@ http.createServer(function (request, response) {
  	stream.pipe(response);
 }).listen(80, '127.0.0.1');
 
-console.log('Ready');
+console.log('Ready - open a browser and go to http://localhost:80/');
