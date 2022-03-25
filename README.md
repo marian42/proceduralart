@@ -8,6 +8,20 @@ The images show alien planets inspired by the art style of [No Man's Sky](https:
 Go ahead and generate your own pixelart here:
 https://marian42.github.io/proceduralart
 
+
+# How to install and run locally
+Ensure you have Node.js (tested with v16.14.0)
+
+Install packages:
+
+`npm install`
+
+Run the server:
+
+`npm run start`
+
+Navigate to [http://localhost:80/](http://localhost:80/) in a browser.
+
 ## Node.js
 Besides the website, this repository contains two nodejs files.
 One is a simple server that provides a new procedural picture at each page load.
